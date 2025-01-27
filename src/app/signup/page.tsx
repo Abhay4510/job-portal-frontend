@@ -51,35 +51,22 @@ export default function SignupPage() {
       confirmPassword: ''
     };
 
-    // Name validation
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
       isValid = false;
-    } else if (formData.name.length < 2) {
-      newErrors.name = 'Name must be at least 2 characters long';
-      isValid = false;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!emailRegex.test(formData.email)) {
+    if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
       isValid = false;
     }
 
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-      isValid = false;
-    } else if (formData.password.length < 6) {
+    if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters long';
       isValid = false;
     }
 
-    // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
       isValid = false;
@@ -92,9 +79,7 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
 
@@ -115,7 +100,7 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (data.status === 'Success') {
-        login(data.token);
+        login(data.token, formData.role);
         toast.success('Account created successfully!');
         router.push('/profile');
       } else {
@@ -133,7 +118,6 @@ export default function SignupPage() {
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Clear error when user starts typing
     if (errors[e.target.name as keyof typeof errors]) {
       setErrors({
         ...errors,
@@ -160,9 +144,7 @@ export default function SignupPage() {
         <Card>
           <CardHeader>
             <CardTitle>Sign Up</CardTitle>
-            <CardDescription>
-              Enter your details to create your account
-            </CardDescription>
+            <CardDescription>Enter your details to create your account</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -200,6 +182,24 @@ export default function SignupPage() {
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-500">{errors.email}</p>
                 )}
+              </div>
+
+              <div>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                  Account Type
+                </label>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => setFormData({ ...formData, role: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select account type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">Job Seeker</SelectItem>
+                    <SelectItem value="recruiter">Recruiter</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -245,24 +245,6 @@ export default function SignupPage() {
                 {errors.confirmPassword && (
                   <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
                 )}
-              </div>
-
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                  Account Type
-                </label>
-                <Select
-                  value={formData.role}
-                //   onValueChange={(value) => setFormData({ ...formData, role: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select account type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="user">Job Seeker</SelectItem>
-                    <SelectItem value="recruiter">Recruiter</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <Button

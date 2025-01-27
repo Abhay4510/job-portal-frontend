@@ -1,26 +1,44 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import JobCard from '@/components/JobCard';
 import { Job } from '@/types';
-// import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Search } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  // const { user, token } = useAuth();
+
+  // Auth context
+  const { user, token, loading: authLoading, role } = useAuth();
+
+  const router = useRouter();
+
+  // If not logged in and done loading, redirect to /login
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [authLoading, user, router]);
 
   useEffect(() => {
-    fetchJobs();
-  }, []);
+    if (user) {
+      // Only fetch jobs if user is logged in
+      fetchJobs();
+    }
+  }, [user]);
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('https://job-portal-backend-82a8.vercel.app/api/job/jobs');
+      const response = await fetch(
+        'https://job-portal-backend-82a8.vercel.app/api/job/jobs'
+      );
       const data = await response.json();
       setJobs(data.data || []);
     } catch (error) {
@@ -31,36 +49,51 @@ export default function JobsPage() {
   };
 
   const handleDelete = async (jobId: string) => {
-    // if (!token) return;
+    // Optional: only recruiters can delete, or handle as needed
+    if (!token) return;
 
     try {
-      const response = await fetch(`https://job-portal-backend-82a8.vercel.app/api/job/jobs`, {
-        method: 'DELETE',
-        headers: {
-          // 'Authorization': `Bearer ${token}`,
-        },
-      });
+      // Example endpoint: /api/job/jobs/:jobId
+      const response = await fetch(
+        `https://job-portal-backend-82a8.vercel.app/api/job/jobs/${jobId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
-        setJobs(jobs.filter(job => job._id !== jobId));
+        setJobs(jobs.filter((job) => job._id !== jobId));
+      } else {
+        console.error('Failed to delete job');
       }
     } catch (error) {
       console.error('Error deleting job:', error);
     }
   };
 
-  const filteredJobs = jobs.filter(job =>
-    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.location.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
+  // While auth context is still loading or we haven't fetched jobs, show spinner
+  if (authLoading || (loading && user)) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
+  }
+
+  // If user is not logged in, we might have triggered a redirect. 
+  // This is a safeguard in case there's a flicker or direct visit.
+  if (!user) {
+    return null; // or some fallback UI
   }
 
   return (
@@ -84,7 +117,8 @@ export default function JobsPage() {
           <JobCard
             key={job._id}
             job={job}
-            // isRecruiter={user?.role === 'recruiter'}
+            // We can pass isRecruiter if needed:
+            isRecruiter={role === 'recruiter'}
             onDelete={handleDelete}
           />
         ))}
@@ -94,7 +128,8 @@ export default function JobsPage() {
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-gray-900">No jobs found</h3>
           <p className="mt-2 text-sm text-gray-500">
-            Try adjusting your search terms or check back later for new opportunities.
+            Try adjusting your search terms or check back later for new
+            opportunities.
           </p>
         </div>
       )}

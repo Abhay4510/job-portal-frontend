@@ -1,13 +1,43 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '@/types';
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'recruiter';
+  profile?: {
+    address?: string;
+    education?: Array<{
+      collegeName?: string;
+      schoolName?: string;
+      degree: string;
+      graduationYear: number;
+    }>;
+    skills?: string[];
+    experience?: Array<{
+      company: string;
+      position: string;
+      duration: string;
+      description: string;
+    }>;
+  };
+  company?: {
+    name: string;
+    description: string;
+    address: string;
+    website: string;
+    industry: string;
+  };
+}
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  role: string | null;
   loading: boolean;
-  login: (token: string) => void;
+  login: (token: string, userRole: string) => void;
   logout: () => void;
   updateUser: (user: User) => void;
 }
@@ -17,12 +47,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    if (storedToken) {
+    const storedRole = localStorage.getItem('role');
+    if (storedToken && storedRole) {
       setToken(storedToken);
+      setRole(storedRole);
       fetchUser(storedToken);
     } else {
       setLoading(false);
@@ -40,44 +73,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data.status === 'success') {
         setUser(data.user);
       } else {
-        localStorage.removeItem('token');
-        setToken(null);
+        logout();
       }
     } catch (error) {
-      localStorage.removeItem('token');
-      setToken(null);
+      logout();
     } finally {
       setLoading(false);
     }
   };
 
-  const login = (newToken: string) => {
+  const login = (newToken: string, userRole: string) => {
     setToken(newToken);
+    setRole(userRole);
     localStorage.setItem('token', newToken);
+    localStorage.setItem('role', userRole);
     fetchUser(newToken);
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
+    setRole(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
   };
 
   const updateUser = (updatedUser: User) => {
     setUser(updatedUser);
   };
 
-  const value: AuthContextType = {
-    user,
-    token,
-    loading,
-    login,
-    logout,
-    updateUser
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, token, role, loading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
