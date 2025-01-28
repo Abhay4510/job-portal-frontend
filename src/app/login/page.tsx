@@ -48,11 +48,12 @@ export default function LoginPage() {
       });
 
       const data = await response.json();
-
+      console.log("token-------------------------------->",data.token)
+      console.log("data---------------------------------->", data)
       if (data.status === 'success') {
         login(data.token, formData.role);
         toast.success('Logged in successfully!');
-        router.push(formData.role === 'recruiter' ? '/post-job' : '/jobs');
+        router.push('/jobs'); 
       } else {
         toast.error(data.message || 'Login failed');
       }

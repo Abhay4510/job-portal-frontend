@@ -70,8 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       });
       const data = await response.json();
-      if (data.status === 'success') {
-        setUser(data.user);
+      console.log("profile--------------------->",data)
+      if (data.success === true) {
+        setUser(data);
+        console.log("bhh-------------------------------->",data)
       } else {
         logout();
       }

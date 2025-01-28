@@ -98,7 +98,8 @@ export default function SignupPage() {
       });
 
       const data = await response.json();
-
+      console.log("token-------------------------------->",data.token)
+      console.log("data---------------------------------->", data)
       if (data.status === 'Success') {
         login(data.token, formData.role);
         toast.success('Account created successfully!');
