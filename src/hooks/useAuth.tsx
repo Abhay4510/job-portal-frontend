@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         logout();
       }
-    } catch (error) {
+    } catch (_) {
       logout();
     } finally {
       setLoading(false);
