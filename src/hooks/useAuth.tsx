@@ -50,6 +50,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchUser = async (authToken: string) => {
+    try {
+      const response = await fetch('https://job-portal-backend-82a8.vercel.app/api/user/profile', {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+      if (data.success === true) {
+        setUser(data);
+      } else {
+        logout();
+      }
+    } catch {
+      // Remove unused error variable
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedRole = localStorage.getItem('role');
@@ -60,29 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       setLoading(false);
     }
-  }, []);
-
-  const fetchUser = async (authToken: string) => {
-    try {
-      const response = await fetch('https://job-portal-backend-82a8.vercel.app/api/user/profile', {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-      const data = await response.json();
-      console.log("profile--------------------->",data)
-      if (data.success === true) {
-        setUser(data);
-        console.log("bhh-------------------------------->",data)
-      } else {
-        logout();
-      }
-    } catch (_) {
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []);  // fetchUser is defined inside the component, so it's stable
 
   const login = (newToken: string, userRole: string) => {
     setToken(newToken);
