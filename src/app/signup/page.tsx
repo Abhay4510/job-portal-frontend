@@ -107,7 +107,7 @@ export default function SignupPage() {
       } else {
         toast.error(data.message || 'Signup failed');
       }
-    } catch (err) {
+    } catch {
       toast.error('An error occurred during signup');
     } finally {
       setLoading(false);
