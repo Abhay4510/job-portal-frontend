@@ -13,7 +13,7 @@ export async function checkAuthStatus(token: string): Promise<User | null> {
       return data.user;
     }
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

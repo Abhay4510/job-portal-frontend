@@ -22,7 +22,7 @@ export function useJobs() {
         } else {
           setError(data.message);
         }
-      } catch (err) {
+      } catch {
         setError('Failed to fetch jobs');
       } finally {
         setLoading(false);
