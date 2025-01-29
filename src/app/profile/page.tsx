@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
   User,
   Building2,
@@ -112,7 +113,7 @@ export default function ProfileView() {
         <div className="text-center mb-8">
           {/* Conditional rendering: If profileImage exists, show the image; otherwise, show the fallback */}
           {profileData?.profileImage ? (
-            <img
+            <Image
               src={profileData.profileImage}
               alt={`${profileData.name}'s Profile`}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-blue-500"

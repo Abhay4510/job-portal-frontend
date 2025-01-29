@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 import JobCard from '@/components/JobCard';
 import { Job } from '@/types';
 import { useAuth } from '@/hooks/useAuth';

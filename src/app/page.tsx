@@ -116,7 +116,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
             >
-              Whether you're hiring talent or searching for your next opportunity, we make the process simple, efficient, and rewarding.
+              Whether you&apos;re hiring talent or searching for your next opportunity, we make the process simple, efficient, and rewarding.
             </motion.p>
 
             {/* Feature Cards */}
