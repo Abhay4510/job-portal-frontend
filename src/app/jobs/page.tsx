@@ -1,45 +1,56 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { useAuth } from '@/hooks/useAuth';
-import { Search, MapPin, Building2, Clock, Briefcase, Filter, Plus, Loader2, Trash2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useAuth } from "@/hooks/useAuth"
+import { Search, MapPin, Building2, Briefcase, Filter, Plus, Loader2, Trash2, ChevronDown } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 // Types remain the same
 interface Job {
-  _id: string;
-  title: string;
-  description: string;
+  _id: string
+  title: string
+  description: string
   company: {
-    _id: string;
-    name: string;
+    _id: string
+    name: string
     company?: {
-      name: string;
-      industry: string;
+      name: string
+      industry: string
     }
-  };
-  location: string;
-  requirements: string[];
-  type: string;
+  }
+  location: string
+  requirements: string[]
+  type: string
   experience: {
-    min: number;
-    max: number;
-  };
-  status: string;
+    min: number
+    max: number
+  }
+  status: string
 }
 
 interface FilterState {
-  location: string;
-  type: string;
-  experience: string;
-  requirements: string;
+  location: string
+  type: string
+  experience: string
+  requirements: string
 }
 
 const containerVariants = {
@@ -47,16 +58,16 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+      staggerChildren: 0.1,
+    },
+  },
+}
 
 const cardVariants = {
-  hidden: { 
+  hidden: {
     opacity: 0,
     y: 20,
-    scale: 0.95
+    scale: 0.95,
   },
   visible: {
     opacity: 1,
@@ -65,16 +76,16 @@ const cardVariants = {
     transition: {
       type: "spring",
       stiffness: 100,
-      damping: 15
-    }
+      damping: 15,
+    },
   },
   exit: {
     opacity: 0,
     scale: 0.95,
     y: -20,
     transition: {
-      duration: 0.2
-    }
+      duration: 0.2,
+    },
   },
   hover: {
     y: -5,
@@ -82,15 +93,15 @@ const cardVariants = {
     transition: {
       type: "spring",
       stiffness: 400,
-      damping: 10
-    }
-  }
-};
+      damping: 10,
+    },
+  },
+}
 
 const filterVariants = {
-  hidden: { 
+  hidden: {
     opacity: 0,
-    height: 0
+    height: 0,
   },
   visible: {
     opacity: 1,
@@ -98,8 +109,8 @@ const filterVariants = {
     transition: {
       type: "spring",
       stiffness: 100,
-      damping: 20
-    }
+      damping: 20,
+    },
   },
   exit: {
     opacity: 0,
@@ -107,46 +118,46 @@ const filterVariants = {
     transition: {
       type: "spring",
       stiffness: 100,
-      damping: 20
-    }
-  }
-};
+      damping: 20,
+    },
+  },
+}
 
 export default function JobsPage() {
   // State declarations remain the same
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
   const [filters, setFilters] = useState<FilterState>({
-    location: '',
-    type: '',
-    experience: '',
-    requirements: ''
-  });
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [jobToDelete, setJobToDelete] = useState<string | null>(null);
+    location: "",
+    type: "",
+    experience: "",
+    requirements: "",
+  })
+  const [showFilters, setShowFilters] = useState(false)
+  const [selectedCard, setSelectedCard] = useState<string | null>(null)
+  const [jobToDelete, setJobToDelete] = useState<string | null>(null)
 
-  const { user, token, loading: authLoading, role } = useAuth();
-  const router = useRouter();
+  const { user, token, loading: authLoading, role } = useAuth()
+  const router = useRouter()
 
   // Authentication effect remains the same
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/login');
+      router.push("/login")
     }
-  }, [authLoading, user, router]);
+  }, [authLoading, user, router])
 
   // fetchJobs function remains the same
   const fetchJobs = async () => {
-    if (!token) return;
+    if (!token) return
 
     try {
-      const queryParams = new URLSearchParams();
-      if (filters.location) queryParams.append('location', filters.location);
-      if (filters.type) queryParams.append('type', filters.type);
-      if (filters.experience) queryParams.append('experience', filters.experience);
-      if (filters.requirements) queryParams.append('requirements', filters.requirements);
+      const queryParams = new URLSearchParams()
+      if (filters.location) queryParams.append("location", filters.location)
+      if (filters.type) queryParams.append("type", filters.type)
+      if (filters.experience) queryParams.append("experience", filters.experience)
+      if (filters.requirements) queryParams.append("requirements", filters.requirements)
 
       const response = await fetch(
         `https://job-portal-backend-82a8.vercel.app/api/job/jobs?${queryParams.toString()}`,
@@ -154,55 +165,52 @@ export default function JobsPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
-      const data = await response.json();
-      setJobs(data.data || []);
+        },
+      )
+      const data = await response.json()
+      setJobs(data.data || [])
     } catch (error) {
-      console.error('Error fetching jobs:', error);
+      console.error("Error fetching jobs:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (token) {
-      fetchJobs();
+      fetchJobs()
     }
-  }, [token, filters]);
+  }, [token, filters]) // Added filters to the dependency array
 
   const handleDelete = async (jobId: string) => {
-    if (!token || role !== 'recruiter') return;
+    if (!token || role !== "recruiter") return
 
     try {
-      setSelectedCard(jobId);
-      const response = await fetch(
-        `https://job-portal-backend-82a8.vercel.app/api/job/jobs/${jobId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      setSelectedCard(jobId)
+      const response = await fetch(`https://job-portal-backend-82a8.vercel.app/api/job/jobs/${jobId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
       if (response.ok) {
-        setJobs(jobs.filter((job) => job._id !== jobId));
-        setJobToDelete(null);
+        setJobs(jobs.filter((job) => job._id !== jobId))
+        setJobToDelete(null)
       }
     } catch (error) {
-      console.error('Error deleting job:', error);
+      console.error("Error deleting job:", error)
     } finally {
-      setSelectedCard(null);
+      setSelectedCard(null)
     }
-  };
+  }
 
   const filteredJobs = jobs.filter(
     (job) =>
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      job.location.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   const JobCard = ({ job }: { job: Job }) => (
     <motion.div
@@ -214,18 +222,13 @@ export default function JobsPage() {
       whileHover="hover"
       className="relative"
     >
-      <Card className="hover:shadow-xl transition-all duration-300 bg-white backdrop-blur-sm bg-opacity-90">
+      <Card className="hover:shadow-xl transition-all duration-300 bg-white backdrop-blur-sm bg-opacity-90 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500" />
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <CardTitle className="text-xl font-bold text-gray-900">
-                  {job.title}
-                </CardTitle>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+                <CardTitle className="text-xl font-bold text-gray-900">{job.title}</CardTitle>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -242,10 +245,7 @@ export default function JobsPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
             >
-              <Badge 
-                variant={job.type === 'full-time' ? 'default' : 'secondary'}
-                className="animate-pulse"
-              >
+              <Badge variant={job.type === "full-time" ? "default" : "secondary"} className="animate-pulse">
                 {job.type}
               </Badge>
             </motion.div>
@@ -279,7 +279,7 @@ export default function JobsPage() {
               transition={{ delay: 0.7 }}
               className="flex flex-wrap gap-2 mt-4"
             >
-              {job.requirements.map((req, index) => (
+              {job.requirements.slice(0, 3).map((req, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -291,6 +291,11 @@ export default function JobsPage() {
                   </Badge>
                 </motion.div>
               ))}
+              {job.requirements.length > 3 && (
+                <Badge variant="outline" className="hover:bg-blue-50 transition-colors">
+                  +{job.requirements.length - 3} more
+                </Badge>
+              )}
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -305,7 +310,7 @@ export default function JobsPage() {
               >
                 View Details
               </Button>
-              {role === 'recruiter' ? (
+              {role === "recruiter" ? (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
@@ -327,8 +332,8 @@ export default function JobsPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the job posting
-                        for "{job.title}" at {job.company.name}.
+                        This action cannot be undone. This will permanently delete the job posting for "{job.title}" at{" "}
+                        {job.company.name}.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -343,7 +348,7 @@ export default function JobsPage() {
                   </AlertDialogContent>
                 </AlertDialog>
               ) : (
-                <Button 
+                <Button
                   onClick={() => router.push(`/jobs/${job._id}/apply`)}
                   className="hover:scale-105 transition-transform bg-blue-600 hover:bg-blue-700"
                 >
@@ -355,7 +360,7 @@ export default function JobsPage() {
         </CardContent>
       </Card>
     </motion.div>
-  );
+  )
 
   if (authLoading || (loading && user)) {
     return (
@@ -367,17 +372,17 @@ export default function JobsPage() {
           }}
           transition={{
             duration: 1,
-            repeat: Infinity,
+            repeat: Number.POSITIVE_INFINITY,
             ease: "linear",
           }}
         >
           <Loader2 className="h-8 w-8 text-blue-600" />
         </motion.div>
       </div>
-    );
+    )
   }
 
-  if (!user) return null;
+  if (!user) return null
 
   return (
     <motion.div
@@ -392,15 +397,14 @@ export default function JobsPage() {
         transition={{ delay: 0.2 }}
         className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
       >
-        <h1 className="text-3xl font-bold text-gray-900">Available Jobs</h1>
-        {role === 'recruiter' && (
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+        <h1 className="text-4xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+          Discover Your Next Opportunity
+        </h1>
+        {role === "recruiter" && (
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
-              onClick={() => router.push('/jobs/post')}
-              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => router.push("/post-job")}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
               <Plus className="h-4 w-4 mr-2" />
               Post New Job
@@ -426,17 +430,11 @@ export default function JobsPage() {
             />
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           </div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="w-full md:w-auto"
-            >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="w-full md:w-auto">
               <Filter className="h-4 w-4 mr-2" />
               Filters
+              <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""}`} />
             </Button>
           </motion.div>
         </div>
@@ -450,12 +448,7 @@ export default function JobsPage() {
               exit="exit"
               className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4"
             >
-              <Select
-                value={filters.location}
-                onValueChange={(value) =>
-                  setFilters({ ...filters, location: value })
-                }
-              >
+              <Select value={filters.location} onValueChange={(value) => setFilters({ ...filters, location: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Location" />
                 </SelectTrigger>
@@ -467,10 +460,7 @@ export default function JobsPage() {
                 </SelectContent>
               </Select>
 
-              <Select
-                value={filters.type}
-                onValueChange={(value) => setFilters({ ...filters, type: value })}
-              >
+              <Select value={filters.type} onValueChange={(value) => setFilters({ ...filters, type: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Job Type" />
                 </SelectTrigger>
@@ -484,13 +474,11 @@ export default function JobsPage() {
 
               <Select
                 value={filters.experience}
-                onValueChange={(value) =>
-                  setFilters({ ...filters, experience: value })
-                }
+                onValueChange={(value) => setFilters({ ...filters, experience: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Experience" />
-                  </SelectTrigger>
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="0,2">0-2 years</SelectItem>
                   <SelectItem value="2,5">2-5 years</SelectItem>
@@ -499,17 +487,14 @@ export default function JobsPage() {
                 </SelectContent>
               </Select>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   onClick={() =>
                     setFilters({
-                      location: '',
-                      type: '',
-                      experience: '',
-                      requirements: ''
+                      location: "",
+                      type: "",
+                      experience: "",
+                      requirements: "",
                     })
                   }
                   variant="outline"
@@ -543,13 +528,20 @@ export default function JobsPage() {
           transition={{ duration: 0.5 }}
           className="text-center py-12"
         >
-          <h3 className="text-lg font-medium text-gray-900">No jobs found</h3>
-          <p className="mt-2 text-sm text-gray-500">
-            Try adjusting your search terms or filters, or check back later for new
-            opportunities.
+          <Image
+            src="/placeholder.svg?height=200&width=200"
+            alt="No jobs found"
+            width={200}
+            height={200}
+            className="mx-auto mb-6"
+          />
+          <h3 className="text-2xl font-medium text-gray-900 mb-2">No jobs found</h3>
+          <p className="text-lg text-gray-500 max-w-md mx-auto">
+            Try adjusting your search terms or filters, or check back later for new opportunities.
           </p>
         </motion.div>
       )}
     </motion.div>
-  );
+  )
 }
+
