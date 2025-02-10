@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,7 +35,15 @@ interface Job {
   updatedAt: string;
 }
 
-export default function JobDetailsPage({ params }: { params: { id: string } }) {
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default function JobDetailsPage({ params, searchParams }: PageProps) {
+  const resolvedParams = use(params);
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const { user, token, loading: authLoading, role } = useAuth();
@@ -53,7 +61,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
 
       try {
         const response = await fetch(
-          `https://job-portal-backend-82a8.vercel.app/api/job/jobs/${params.id}`,
+          `https://job-portal-backend-82a8.vercel.app/api/job/jobs/${resolvedParams.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -72,7 +80,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
     if (token) {
       fetchJobDetails();
     }
-  }, [token, params.id]);
+  }, [token, resolvedParams.id]);
 
   if (authLoading || (loading && user)) {
     return (
