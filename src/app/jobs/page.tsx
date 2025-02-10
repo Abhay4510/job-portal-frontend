@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
@@ -124,7 +124,6 @@ const filterVariants = {
 }
 
 export default function JobsPage() {
-  // State declarations remain the same
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -136,20 +135,18 @@ export default function JobsPage() {
   })
   const [showFilters, setShowFilters] = useState(false)
   const [selectedCard, setSelectedCard] = useState<string | null>(null)
-  const [jobToDelete, setJobToDelete] = useState<string | null>(null)
+  // const [jobToDelete, setJobToDelete] = useState<string | null>(null)
 
   const { user, token, loading: authLoading, role } = useAuth()
   const router = useRouter()
 
-  // Authentication effect remains the same
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login")
     }
   }, [authLoading, user, router])
 
-  // fetchJobs function remains the same
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     if (!token) return
 
     try {
@@ -165,7 +162,7 @@ export default function JobsPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       )
       const data = await response.json()
       setJobs(data.data || [])
@@ -174,13 +171,13 @@ export default function JobsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [token, filters])
 
   useEffect(() => {
     if (token) {
       fetchJobs()
     }
-  }, [token, filters]) // Added filters to the dependency array
+  }, [token, filters, fetchJobs])
 
   const handleDelete = async (jobId: string) => {
     if (!token || role !== "recruiter") return
@@ -196,7 +193,6 @@ export default function JobsPage() {
 
       if (response.ok) {
         setJobs(jobs.filter((job) => job._id !== jobId))
-        setJobToDelete(null)
       }
     } catch (error) {
       console.error("Error deleting job:", error)
@@ -209,7 +205,7 @@ export default function JobsPage() {
     (job) =>
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.location.toLowerCase().includes(searchTerm.toLowerCase()),
+      job.location.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const JobCard = ({ job }: { job: Job }) => (
@@ -332,8 +328,7 @@ export default function JobsPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the job posting for "{job.title}" at{" "}
-                        {job.company.name}.
+                      This action cannot be undone. This will permanently delete the job posting for &quot;{job.title}&quot; at {job.company.name}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

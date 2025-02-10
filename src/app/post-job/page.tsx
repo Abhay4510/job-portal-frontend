@@ -40,7 +40,7 @@ const initialFormData: JobFormData = {
 export default function PostJobPage() {
   const [formData, setFormData] = useState<JobFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
-  const { token, user } = useAuth();
+  const { token } = useAuth(); // Removed unused 'user' variable
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {

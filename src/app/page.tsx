@@ -209,8 +209,8 @@ export default function HomePage() {
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">What Our Users Say</h2>
               <blockquote className="text-xl italic text-gray-700">
-                "This platform has revolutionized our hiring process. We&apos;ve found amazing talent and reduced our
-                time-to-hire significantly!"
+              &quot;This platform has revolutionized our hiring process. We&apos;ve found amazing talent and reduced our
+                time-to-hire significantly!&quot;
               </blockquote>
               <div className="mt-4">
                 <p className="font-semibold text-gray-900">Jane Doe</p>
