@@ -39,10 +39,9 @@ interface PageProps {
   params: Promise<{
     id: string;
   }>;
-  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default function JobDetailsPage({ params, searchParams }: PageProps) {
+export default function JobDetailsPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
