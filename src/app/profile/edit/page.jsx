@@ -43,7 +43,8 @@ export default function ProfileEditForm() {
   const { token, role } = useAuth();
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -105,15 +106,14 @@ export default function ProfileEditForm() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setProfileImageFile(file); 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result);
-        setFormData(prev => ({ ...prev, profileImage: reader.result }));
+        setProfileImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
-
   const validateForm = () => {
     const newErrors = {};
     
@@ -158,8 +158,8 @@ export default function ProfileEditForm() {
       
       // Common fields
       formDataToSend.append("name", formData.name);
-      if (profileImage) {
-        formDataToSend.append("profileImage", profileImage);
+      if (profileImageFile) {
+        formDataToSend.append("profileImage", profileImageFile);
       }
 
       if (role === "user") {
@@ -244,7 +244,7 @@ export default function ProfileEditForm() {
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative">
                   <Avatar className="w-32 h-32">
-                    <AvatarImage src={profileImage || formData.profileImage} />
+                  <AvatarImage src={profileImagePreview || formData.profileImage} />
                     <AvatarFallback className="text-2xl">
                       {formData.name?.charAt(0)?.toUpperCase()}
                     </AvatarFallback>
