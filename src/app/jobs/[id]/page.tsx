@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { motion } from "framer-motion"
+import { LucideIcon } from "lucide-react"
 import {
   MapPin,
   Building2,
@@ -66,6 +67,19 @@ const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
+}
+
+interface InfoCardProps {
+  icon: LucideIcon
+  title: string
+  value: string
+}
+
+interface InfoBadgeProps {
+  icon: LucideIcon
+  label: string
+  value: string
+  variant?: "default" | "success" | "error"
 }
 
 export default function JobDetailPage({ params }: PageProps) {
@@ -280,7 +294,7 @@ export default function JobDetailPage({ params }: PageProps) {
   )
 }
 
-const InfoCard = ({ icon: Icon, title, value }: { icon: any; title: string; value: string }) => (
+const InfoCard = ({ icon: Icon, title, value }: InfoCardProps) => (
   <div className="bg-gray-50 p-4 rounded-lg">
     <div className="flex items-center mb-2">
       <Icon className="h-5 w-5 text-blue-500 mr-2" />
@@ -295,12 +309,7 @@ const InfoBadge = ({
   label,
   value,
   variant = "default",
-}: {
-  icon: any
-  label: string
-  value: string
-  variant?: "default" | "success" | "error"
-}) => (
+}: InfoBadgeProps) => (
   <Badge
     variant="outline"
     className={`flex items-center space-x-1 px-3 py-1 ${
