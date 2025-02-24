@@ -28,6 +28,13 @@ interface CountryItem {
   code: string; 
 }
 
+interface CountryData {
+  name: {
+    common: string;
+  };
+  cca2: string;
+}
+
 interface JobFormData {
   title: string;
   description: string;
@@ -91,17 +98,18 @@ export default function PostJobPage() {
         }
         const data = await res.json();
         const countryList: CountryItem[] = data
-          .filter((c: any) => c.cca2) 
-          .map((c: any) => ({
+          .filter((c: CountryData) => c.cca2) 
+          .map((c: CountryData) => ({
             name: c.name.common,
             code: c.cca2, 
           }))
           .sort((a: CountryItem, b: CountryItem) => a.name.localeCompare(b.name));
 
         setCountries(countryList);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching countries:', error);
-        setFetchError(error?.message || 'Error fetching countries.');
+        const errorMessage = error instanceof Error ? error.message : 'Error fetching countries.';
+        setFetchError(errorMessage);
       } finally {
         setIsCountriesLoading(false);
       }
@@ -130,9 +138,10 @@ export default function PostJobPage() {
       const stateNames = data.geonames?.map((g) => g.name) ?? [];
       const uniqueStates = Array.from(new Set(stateNames)).sort();
       setStates(uniqueStates);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching states:', error);
-      setFetchError(error?.message || 'Error fetching states.');
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching states.';
+      setFetchError(errorMessage);
     } finally {
       setIsStatesLoading(false);
     }
@@ -156,9 +165,10 @@ export default function PostJobPage() {
       const cityNames = data.geonames?.map((g) => g.name) ?? [];
       const uniqueCities = Array.from(new Set(cityNames)).sort();
       setCities(uniqueCities);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching cities:', error);
-      setFetchError(error?.message || 'Error fetching cities.');
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching cities.';
+      setFetchError(errorMessage);
     } finally {
       setIsCitiesLoading(false);
     }
@@ -206,9 +216,10 @@ export default function PostJobPage() {
       } else {
         throw new Error(`Job creation failed: ${response.statusText}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error posting job:', error);
-      setFetchError(error?.message || 'Error posting job');
+      const errorMessage = error instanceof Error ? error.message : 'Error posting job';
+      setFetchError(errorMessage);
     } finally {
       setSubmitLoading(false);
     }
