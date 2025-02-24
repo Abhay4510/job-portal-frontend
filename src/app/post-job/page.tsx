@@ -129,7 +129,7 @@ export default function PostJobPage() {
     try {
       setIsStatesLoading(true);
       const res = await fetch(
-        `https://api.geonames.org/searchJSON?country=${value}&featureClass=A&featureCode=ADM1&username=abhay4510`
+        `https://secure.geonames.org/searchJSON?country=${value}&featureClass=A&featureCode=ADM1&username=abhay4510`
       );
       if (!res.ok) {
         throw new Error(`States fetch failed: ${res.statusText}`);
@@ -156,7 +156,7 @@ export default function PostJobPage() {
     try {
       setIsCitiesLoading(true);
       const res = await fetch(
-        `https://api.geonames.org/searchJSON?q=${value}&country=${formData.country}&featureClass=P&username=abhay4510`
+        `https://secure.geonames.org/searchJSON?q=${value}&country=${formData.country}&featureClass=P&username=abhay4510`
       );
       if (!res.ok) {
         throw new Error(`Cities fetch failed: ${res.statusText}`);
