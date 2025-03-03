@@ -5,28 +5,8 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Create a custom Select Root that disables typeahead
-const Select = React.forwardRef<
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & { onOpenChange?: (open: boolean) => void }
->((props, _ref) => {
-  // Handle open state manually to avoid typeahead issues
-  const [open, setOpen] = React.useState(false);
-  
-  const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen);
-    props.onOpenChange?.(isOpen);
-  };
-
-  return (
-    <SelectPrimitive.Root 
-      {...props} 
-      open={open} 
-      onOpenChange={handleOpenChange}
-    />
-  );
-});
-Select.displayName = "Select";
+// Define the custom Select component
+const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
@@ -115,6 +95,33 @@ SelectItem.displayName = SelectPrimitive.Item.displayName;
 const SelectLabel = SelectPrimitive.Label;
 const SelectSeparator = SelectPrimitive.Separator;
 
+// Create a custom SelectWithoutTypeahead component (optional)
+const SelectWithoutTypeahead = ({ 
+  children, 
+  onOpenChange,
+  ...props 
+}: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & { 
+  onOpenChange?: (open: boolean) => void 
+}) => {
+  // Handle open state manually to avoid typeahead issues
+  const [open, setOpen] = React.useState(false);
+  
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    onOpenChange?.(isOpen);
+  };
+
+  return (
+    <SelectPrimitive.Root 
+      {...props} 
+      open={open} 
+      onOpenChange={handleOpenChange}
+    >
+      {children}
+    </SelectPrimitive.Root>
+  );
+};
+
 export {
   Select,
   SelectGroup,
@@ -124,4 +131,5 @@ export {
   SelectItem,
   SelectLabel,
   SelectSeparator,
+  SelectWithoutTypeahead, // Export the no-typeahead version as an alternative
 };
