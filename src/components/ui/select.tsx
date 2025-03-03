@@ -5,7 +5,29 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const Select = SelectPrimitive.Root;
+// Create a custom Select Root that disables typeahead
+const Select = React.forwardRef<
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & { onOpenChange?: (open: boolean) => void }
+>((props, _ref) => {
+  // Handle open state manually to avoid typeahead issues
+  const [open, setOpen] = React.useState(false);
+  
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    props.onOpenChange?.(isOpen);
+  };
+
+  return (
+    <SelectPrimitive.Root 
+      {...props} 
+      open={open} 
+      onOpenChange={handleOpenChange}
+    />
+  );
+});
+Select.displayName = "Select";
+
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
@@ -37,12 +59,21 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-white text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className
       )}
       position={position}
+      onCloseAutoFocus={(event) => {
+        event.preventDefault();
+      }}
+      onKeyDown={(event) => {
+        // Prevent default key handling to avoid typeahead issues
+        if (["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) {
+          event.stopPropagation();
+        }
+      }}
       {...props}
     >
       <SelectPrimitive.Viewport
@@ -81,6 +112,9 @@ const SelectItem = React.forwardRef<
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
+const SelectLabel = SelectPrimitive.Label;
+const SelectSeparator = SelectPrimitive.Separator;
+
 export {
   Select,
   SelectGroup,
@@ -88,4 +122,6 @@ export {
   SelectTrigger,
   SelectContent,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
 };
