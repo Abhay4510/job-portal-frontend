@@ -131,5 +131,5 @@ export {
   SelectItem,
   SelectLabel,
   SelectSeparator,
-  SelectWithoutTypeahead, // Export the no-typeahead version as an alternative
+  SelectWithoutTypeahead, 
 };
