@@ -7,20 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { motion } from "framer-motion"
-import { LucideIcon } from "lucide-react"
-import {
-  MapPin,
-  Building2,
-  Briefcase,
-  Calendar,
-  DollarSign,
-  Users,
-  Clock,
-  GraduationCap,
-  CheckCircle2,
-  XCircle,
-  ArrowLeft,
-} from "lucide-react"
+import { type LucideIcon } from 'lucide-react'
+import { MapPin, Building2, Briefcase, Calendar, DollarSign, Users, Clock, GraduationCap, CheckCircle2, XCircle, ArrowLeft, UserRound } from 'lucide-react'
 
 interface Job {
   _id: string
@@ -264,7 +252,7 @@ export default function JobDetailPage({ params }: PageProps) {
           </motion.div>
         </div>
 
-        <motion.div className="p-6 bg-gray-50 flex justify-between items-center" variants={fadeInUp}>
+        <motion.div className="p-6 bg-gray-50 flex flex-wrap justify-between items-center gap-4" variants={fadeInUp}>
           <Button
             onClick={() => router.push("/jobs")}
             variant="outline"
@@ -272,22 +260,34 @@ export default function JobDetailPage({ params }: PageProps) {
           >
             Back to Jobs
           </Button>
-          {role === "user" ? (
-            <Button
-              onClick={() => router.push(`/jobs/${job._id}/apply`)}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-300 transform hover:scale-105"
-            >
-              Apply Now
-            </Button>
-          ) : role === "employer" && (
-            <Button
-              onClick={() => router.push(`/jobs/${job._id}/edit`)}
-              variant="outline"
-              className="hover:bg-gray-200 transition-colors"
-            >
-              Edit Job
-            </Button>
-          )}
+          
+          <div className="flex flex-wrap gap-4">
+            {role === "user" ? (
+              <Button
+                onClick={() => router.push(`/jobs/${job._id}/apply`)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-300 transform hover:scale-105"
+              >
+                Apply Now
+              </Button>
+            ) : role === "recruiter" && (
+              <>
+                <Button
+                  onClick={() => router.push(`/jobs/${job._id}/applicants`)}
+                  className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white transition-all duration-300 transform hover:scale-105"
+                >
+                  <UserRound className="h-4 w-4 mr-2" />
+                  View Applicants
+                </Button>
+                <Button
+                  onClick={() => router.push(`/jobs/${job._id}/edit`)}
+                  variant="outline"
+                  className="hover:bg-gray-200 transition-colors"
+                >
+                  Edit Job
+                </Button>
+              </>
+            )}
+          </div>
         </motion.div>
       </motion.div>
     </div>
