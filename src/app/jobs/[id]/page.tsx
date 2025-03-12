@@ -234,13 +234,21 @@ export default function JobDetailPage({ params }: PageProps) {
             <InfoBadge 
               icon={Calendar} 
               label="Posted on" 
-              value={new Date(job.createdAt).toLocaleDateString()} 
+              value={new Date(job.createdAt).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+              })} 
             />
             {job.applicationDeadline && (
               <InfoBadge
                 icon={Clock}
                 label="Application Deadline"
-                value={new Date(job.applicationDeadline).toLocaleDateString()}
+                value={new Date(job.applicationDeadline).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                })}
               />
             )}
             <InfoBadge

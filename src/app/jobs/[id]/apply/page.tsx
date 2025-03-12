@@ -280,7 +280,11 @@ export default function ApplyJobPage({ params }: PageProps) {
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm truncate">{savedResume.name}</p>
                             <p className="text-xs text-gray-500">
-                              Uploaded on {new Date(savedResume.createdAt).toLocaleDateString()}
+                            Uploaded on {new Date(savedResume.createdAt).toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            })}
                             </p>
                           </div>
                         </div>

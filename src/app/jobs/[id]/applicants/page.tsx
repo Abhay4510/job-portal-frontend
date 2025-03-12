@@ -201,7 +201,11 @@ export default function ApplicantsPage({ params }: PageProps) {
                             <div className="flex items-center text-gray-600 mb-2">
                               <Calendar className="h-4 w-4 mr-2" />
                               <span className="text-sm">
-                                Applied on: {new Date(applicant.createdAt).toLocaleDateString()}
+                                Applied on: Applied on: {new Date(applicant.createdAt).toLocaleDateString('en-GB', {
+                                                          day: '2-digit',
+                                                          month: '2-digit',
+                                                          year: 'numeric'
+                                                        })}
                               </span>
                             </div>
                             {applicant.applicant.profile?.skills && (
