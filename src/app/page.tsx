@@ -308,13 +308,12 @@ export default function HomePage() {
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/learn-more">
+                <Link href="/jobs">
                   <Button
-                    variant="outline"
                     size="lg"
-                    className="w-full sm:w-auto border-2 border-white text-white hover:bg-white/10 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    Learn More
+                    Explore Jobs
                   </Button>
                 </Link>
               </motion.div>
