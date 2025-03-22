@@ -48,15 +48,39 @@ export default function HomePage() {
   const backgroundY = useTransform(springYBg, (value) => `${value}%`)
 
   const features = [
-    { icon: BriefcaseIcon, text: "1000+ Job Opportunities" },
-    { icon: SearchIcon, text: "Smart Job Matching" },
-    { icon: StarIcon, text: "Top Companies" },
+    { 
+      icon: BriefcaseIcon, 
+      title: "1000+ Job Opportunities",
+      description: "Access thousands of curated positions across industries, from entry-level to executive roles, updated daily with the latest openings."
+    },
+    { 
+      icon: SearchIcon, 
+      title: "Smart Job Matching",
+      description: "Our AI-powered algorithm matches your skills and preferences with ideal positions, saving you time and connecting you with jobs where you'll truly excel."
+    },
+    { 
+      icon: StarIcon, 
+      title: "Top Companies",
+      description: "Connect with industry leaders and innovative startups that offer competitive compensation, growth opportunities, and positive work environments."
+    },
   ]
 
   const recruiterFeatures = [
-    { icon: UsersIcon, text: "Find Top Talent Easily" },
-    { icon: GlobeIcon, text: "Global Reach for Hiring" },
-    { icon: BriefcaseIcon, text: "Streamlined Recruitment" },
+    { 
+      icon: UsersIcon, 
+      title: "Find Top Talent Easily",
+      description: "Discover qualified candidates quickly with our advanced filtering tools and precision matching based on skills, experience, and cultural fit."
+    },
+    { 
+      icon: GlobeIcon, 
+      title: "Global Reach for Hiring",
+      description: "Expand your talent search worldwide with our international candidate pool and localized recruitment tools designed for diverse hiring needs."
+    },
+    { 
+      icon: BriefcaseIcon, 
+      title: "Streamlined Recruitment",
+      description: "Simplify your hiring process with our all-in-one platform for posting jobs, screening applicants, scheduling interviews, and onboarding new team members."
+    },
   ]
 
   return (
@@ -177,7 +201,8 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            {[...features, ...recruiterFeatures].map((feature, index) => (
+            <h2 className="col-span-full text-2xl font-bold text-gray-800 mb-2">For Job Seekers</h2>
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
                 className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg"
@@ -190,10 +215,30 @@ export default function HomePage() {
                 transition={{ delay: 1 + index * 0.1 }}
               >
                 <feature.icon className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.text}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
                 <p className="text-sm text-gray-600">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua.
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+
+            <h2 className="col-span-full text-2xl font-bold text-gray-800 mt-8 mb-2">For Recruiters</h2>
+            {recruiterFeatures.map((feature, index) => (
+              <motion.div
+                key={index}
+                className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)",
+                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.3 + index * 0.1 }}
+              >
+                <feature.icon className="h-8 w-8 text-blue-600 mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-600">
+                  {feature.description}
                 </p>
               </motion.div>
             ))}
@@ -209,7 +254,7 @@ export default function HomePage() {
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">What Our Users Say</h2>
               <blockquote className="text-xl italic text-gray-700">
-              &quot;This platform has revolutionized our hiring process. We&apos;ve found amazing talent and reduced our
+                &quot;This platform has revolutionized our hiring process. We&apos;ve found amazing talent and reduced our
                 time-to-hire significantly!&quot;
               </blockquote>
               <div className="mt-4">
@@ -218,9 +263,65 @@ export default function HomePage() {
               </div>
             </div>
           </motion.div>
+
+          <motion.div 
+            className="mt-24 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4, duration: 0.8 }}
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-10">Empowering Careers Worldwide</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
+                <div className="text-4xl font-bold text-blue-600 mb-2">500K+</div>
+                <div className="text-gray-600">Active Job Seekers</div>
+              </div>
+              <div className="p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
+                <div className="text-4xl font-bold text-blue-600 mb-2">10K+</div>
+                <div className="text-gray-600">Partner Companies</div>
+              </div>
+              <div className="p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
+                <div className="text-4xl font-bold text-blue-600 mb-2">85%</div>
+                <div className="text-gray-600">Successful Placements</div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* CTA Section */}
+          <motion.div
+            className="mt-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 lg:p-12 text-center text-white"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+          >
+            <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Career Journey?</h2>
+            <p className="mb-8 max-w-2xl mx-auto">Join thousands of professionals who&apos;ve found their dream jobs and companies who&apos;ve built exceptional teams.</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/signup">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Sign Up Now
+                  </Button>
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/learn-more">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full sm:w-auto border-2 border-white text-white hover:bg-white/10 shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Learn More
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
   )
 }
-
